@@ -16,8 +16,8 @@ func PrintUsage() {
 	println("Copyright (C) 2023 JustSong. All rights reserved.")
 	println("GitHub repository: https://github.com/songquanpeng/go-public")
 	println("Usage: go-public [--config <config file path>] [--version] [--help]")
-	println("       go-public init <server|client>")
-	println("       go-public <port>")
+	println("       go-public init <handler|client>")
+	println("       go-public <local_port> <remote_port>")
 }
 
 func init() {

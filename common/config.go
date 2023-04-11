@@ -7,10 +7,9 @@ import (
 )
 
 type serverConfig struct {
-	Host       string `yaml:"host"`
-	ListenPort int    `yaml:"listen_port"`
-	PublicPort int    `yaml:"public_port"`
-	Token      string `yaml:"password"`
+	Port      int      `yaml:"port"`
+	Token     string   `yaml:"token"`
+	WhiteList []string `yaml:"white_list"`
 }
 
 type clientConfig struct {
@@ -39,15 +38,13 @@ func InitConfigFile(isServer bool) {
 		os.Exit(1)
 	}
 	defaultServerConfig := serverConfig{
-		Host:       "localhost",
-		ListenPort: 6871,
-		PublicPort: 8080,
-		Token:      "123456",
+		Port:  6871,
+		Token: GenerateToken(),
 	}
 	defaultClientConfig := clientConfig{
-		Host:  "localhost",
+		Host:  "replace_this_with_your_server_host",
 		Port:  6871,
-		Token: "123456",
+		Token: "replace_this_with_your_server_token",
 	}
 	var defaultConfigBytes []byte
 	var err error

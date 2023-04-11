@@ -1,9 +1,8 @@
 package main
 
 import (
-	"go-public/client"
 	"go-public/common"
-	"go-public/server"
+	"go-public/handler"
 	"os"
 	"strconv"
 )
@@ -23,19 +22,21 @@ func main() {
 	if len(os.Args) == 1 {
 		// Server mode
 		common.LoadConfigFile(true)
-		server.ServeForever()
+		handler.ServeForever()
 		os.Exit(0)
 	}
-	if len(os.Args) == 2 {
+	if len(os.Args) == 3 {
 		// Client mode
 		common.LoadConfigFile(false)
-		port, err := strconv.Atoi(os.Args[1])
-		if err != nil {
-			println("Usage: go-public <port>")
+		localPort, err1 := strconv.Atoi(os.Args[1])
+		remotePort, err2 := strconv.Atoi(os.Args[2])
+		if err1 != nil || err2 != nil {
+			println("Usage: go-public <local_port> <remote_port>")
 			os.Exit(1)
 		}
-		client.PublicPort(port)
+		handler.PublicPort(localPort, remotePort)
+		os.Exit(0)
 	}
-	println("Usage: go-public <port> or go-public init <server|client>")
+	println("Usage: go-public <local_port> <remote_port> or go-public init <server|client>")
 	os.Exit(1)
 }
