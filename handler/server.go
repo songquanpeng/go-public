@@ -8,7 +8,7 @@ import (
 )
 
 func ServeForever() {
-	fmt.Println("Go Public server started.")
+	fmt.Printf("Go Public server started at port %d.\n", common.ServerConfig.Port)
 	addr := net.TCPAddr{
 		IP:   nil,
 		Port: common.ServerConfig.Port,
@@ -19,7 +19,7 @@ func ServeForever() {
 		os.Exit(1)
 	}
 	defer listener.Close()
-	fmt.Printf("Server listening on port %d, waiting for connections...\n", common.ServerConfig.Port)
+	fmt.Printf("Waiting for connections...\n")
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -68,7 +68,7 @@ func handleHelloPacket(conn net.Conn, buf []byte) {
 			println(err.Error())
 			continue
 		}
-		fmt.Printf("[%d] Connection %p established.\n", port, userConn)
+		//fmt.Printf("[%d] Connection %p established.\n", port, userConn)
 		token := common.GenerateToken()
 		store.add(token, &userConn)
 		err = SendConnPacket(conn, token)
@@ -82,10 +82,12 @@ func handleHelloPacket(conn net.Conn, buf []byte) {
 func handleConnPacket(conn net.Conn, buf []byte) {
 	uuid := common.Bytes2Token(buf[1 : 1+tokenSize])
 	userConn := store.get(uuid)
+	store.remove(uuid)
 	if userConn == nil {
 		fmt.Println("Invalid UUID:", uuid)
 		return
 	}
+	fmt.Printf("Connection established: %s <-> %s\n", conn.RemoteAddr().String(), (*userConn).RemoteAddr().String())
 	go forward(*userConn, conn)
 	forward(conn, *userConn)
 }
