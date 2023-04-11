@@ -21,9 +21,4 @@ func init() {
 		flag.PrintDefaults()
 		os.Exit(0)
 	}
-	if len(os.Args) > 1 && os.Args[1] == "init" {
-		initConfigFile()
-		os.Exit(0)
-	}
-	loadConfigFile()
 }

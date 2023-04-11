@@ -13,7 +13,7 @@ type Config struct {
 
 var CONFIG = Config{}
 
-func initConfigFile() {
+func InitConfigFile() {
 	if _, err := os.Stat(*ConfigFile); err == nil {
 		println("Config file already exists.")
 		os.Exit(1)
@@ -36,7 +36,7 @@ func initConfigFile() {
 	println("Config file created successfully, file path: " + *ConfigFile)
 }
 
-func loadConfigFile() {
+func LoadConfigFile() {
 	configBytes, err := os.ReadFile(*ConfigFile)
 	if err != nil {
 		println("Config file `" + *ConfigFile + "` not found, use subcommand `init` to create a new one.")
