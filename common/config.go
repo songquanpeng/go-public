@@ -3,46 +3,88 @@ package common
 import (
 	"gopkg.in/yaml.v3"
 	"os"
+	"path"
 )
 
-type Config struct {
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	Password string `yaml:"password"`
+type serverConfig struct {
+	Host       string `yaml:"host"`
+	ListenPort int    `yaml:"listen_port"`
+	PublicPort int    `yaml:"public_port"`
+	Token      string `yaml:"password"`
 }
 
-var CONFIG = Config{}
+type clientConfig struct {
+	Host  string `yaml:"host"`
+	Port  int    `yaml:"port"`
+	Token string `yaml:"token"`
+}
 
-func InitConfigFile() {
-	if _, err := os.Stat(*ConfigFile); err == nil {
+var ServerConfig = serverConfig{}
+var ClientConfig = clientConfig{}
+
+func getConfigPath(isServer bool) string {
+	var configPath string
+	if isServer {
+		configPath = path.Join(*ConfigPath, "go-public-server.yaml")
+	} else {
+		configPath = path.Join(*ConfigPath, "go-public-client.yaml")
+	}
+	return configPath
+}
+
+func InitConfigFile(isServer bool) {
+	configPath := getConfigPath(isServer)
+	if _, err := os.Stat(configPath); err == nil {
 		println("Config file already exists.")
 		os.Exit(1)
 	}
-	defaultConfig := Config{
-		Host:     "localhost",
-		Port:     6971,
-		Password: "123456",
+	defaultServerConfig := serverConfig{
+		Host:       "localhost",
+		ListenPort: 6871,
+		PublicPort: 8080,
+		Token:      "123456",
 	}
-	defaultConfigBytes, err := yaml.Marshal(defaultConfig)
+	defaultClientConfig := clientConfig{
+		Host:  "localhost",
+		Port:  6871,
+		Token: "123456",
+	}
+	var defaultConfigBytes []byte
+	var err error
+	if isServer {
+		defaultConfigBytes, err = yaml.Marshal(defaultServerConfig)
+	} else {
+		defaultConfigBytes, err = yaml.Marshal(defaultClientConfig)
+	}
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)
 	}
-	err = os.WriteFile(*ConfigFile, defaultConfigBytes, 0644)
+	err = os.WriteFile(configPath, defaultConfigBytes, 0644)
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)
 	}
-	println("Config file created successfully, file path: " + *ConfigFile)
+	println("Config file initialized at: " + configPath)
 }
 
-func LoadConfigFile() {
-	configBytes, err := os.ReadFile(*ConfigFile)
+func LoadConfigFile(isServer bool) {
+	configPath := getConfigPath(isServer)
+	configBytes, err := os.ReadFile(configPath)
 	if err != nil {
-		println("Config file `" + *ConfigFile + "` not found, use subcommand `init` to create a new one.")
+		println("Config file `" + configPath + "` not found.")
+		if isServer {
+			println("Use `go-public init server` to initialize a config file.")
+		} else {
+			println("Use `go-public init client` to initialize a config file.")
+		}
 		os.Exit(1)
 	}
-	err = yaml.Unmarshal(configBytes, &CONFIG)
+	if isServer {
+		err = yaml.Unmarshal(configBytes, &ServerConfig)
+	} else {
+		err = yaml.Unmarshal(configBytes, &ClientConfig)
+	}
 	if err != nil {
 		println(err.Error())
 		os.Exit(1)
