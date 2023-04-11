@@ -3,44 +3,48 @@ package handler
 import (
 	"fmt"
 	"go-public/common"
-	"io"
 	"net"
 	"strconv"
 )
 
 func PublicPort(localPort, remotePort int) {
-	localConn, err := net.Dial("tcp", "localhost:"+strconv.Itoa(localPort))
-	if err != nil {
-		fmt.Println("Failed to connect to local port:", err.Error())
-		return
-	}
-	fmt.Println("Connected to local port", localPort)
 	conn, err := net.Dial("tcp", common.ClientConfig.Host+":"+strconv.Itoa(common.ClientConfig.Port))
 	if err != nil {
 		fmt.Println("Failed to connect to server:", err.Error())
 		return
 	}
 	fmt.Println("Connected to server with remote port", remotePort)
-	err = sendHello(conn, remotePort)
+	err = sendHelloPacket(conn, remotePort)
 	if err != nil {
 		fmt.Println("Failed to send hello:", err.Error())
 		return
 	}
-	go func() {
-		_, err = io.Copy(localConn, conn)
+	fmt.Println("Hello packet sent")
+	buf := make([]byte, ConnPacketSize)
+	for {
+		_, err := conn.Read(buf)
 		if err != nil {
-			println(err.Error())
+			fmt.Println(err.Error())
+			return
 		}
-		defer localConn.Close()
-	}()
-	func() {
-		_, err = io.Copy(conn, localConn)
+		// Should be a connection packet
+		localConn, err := net.Dial("tcp", "localhost:"+strconv.Itoa(localPort))
 		if err != nil {
-			println(err.Error())
+			fmt.Println("Failed to connect to local server:", err.Error())
+			continue
 		}
-		defer localConn.Close()
-	}()
-	//go forward(localConn, conn)
-	//forward(conn, localConn)
-	fmt.Println("Connection broken")
+		remoteConn, err := net.Dial("tcp", common.ClientConfig.Host+":"+strconv.Itoa(common.ClientConfig.Port))
+		if err != nil {
+			fmt.Println("Failed to connect to remote server:", err.Error())
+			continue
+		}
+		go func() {
+			_, err := remoteConn.Write(buf)
+			if err != nil {
+				fmt.Println("Failed to send connection packet:", err.Error())
+			}
+		}()
+		go forward(localConn, remoteConn)
+		go forward(remoteConn, localConn)
+	}
 }
