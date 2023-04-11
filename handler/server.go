@@ -19,14 +19,13 @@ func ServeForever() {
 		os.Exit(1)
 	}
 	defer listener.Close()
-	fmt.Printf("Server listening on port %d. \nWaiting for connections...\n", common.ServerConfig.Port)
+	fmt.Printf("Server listening on port %d, waiting for connections...\n", common.ServerConfig.Port)
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
 			println(err.Error())
 			continue
 		}
-		fmt.Println("Client connection established:", conn.RemoteAddr().String())
 		go handleClientConnection(conn)
 	}
 }
@@ -62,7 +61,7 @@ func handleHelloPacket(conn net.Conn, buf []byte) {
 		return
 	}
 	defer listener.Close()
-	fmt.Printf("Forwarding port %d. \n[%d] Waiting for connections...\n", port, port)
+	fmt.Printf("New client connected, forwarding port %d.\n", port)
 	for {
 		userConn, err := listener.Accept()
 		if err != nil {
@@ -74,7 +73,7 @@ func handleHelloPacket(conn net.Conn, buf []byte) {
 		store.add(token, &userConn)
 		err = SendConnPacket(conn, token)
 		if err != nil {
-			fmt.Println("Failed to send connection packet: ", err.Error())
+			fmt.Printf("[%d] Failed to send connection packet: %s\n", port, err.Error())
 			return
 		}
 	}
