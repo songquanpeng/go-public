@@ -1,0 +1,41 @@
+name: Build Releases
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '>=1.19.0'
+      - name: Build Binaries
+        run: |
+          go mod download
+          GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -X 'go-template/common.Version=$(git describe --tags)'" -o go-template-linux-amd64
+          GOOS=linux GOARCH=arm GOARM=7 go build -ldflags "-s -w -X 'go-template/common.Version=$(git describe --tags)'" -o go-template-linux-arm7
+          GOOS=linux GOARCH=arm64 go build -ldflags "-s -w -X 'go-template/common.Version=$(git describe --tags)'" -o go-template-linux-arm64
+          GOOS=windows GOARCH=amd64 go build -ldflags "-s -w -X 'go-template/common.Version=$(git describe --tags)'" -o go-template-windows-amd64.exe
+          GOOS=darwin GOARCH=amd64 go build -ldflags "-s -w -X 'go-template/common.Version=$(git describe --tags)'" -o go-template-darwin-amd64
+          GOOS=darwin GOARCH=arm64 go build -ldflags "-s -w -X 'go-template/common.Version=$(git describe --tags)'" -o go-template-darwin-arm64
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            go-template*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
