@@ -24,18 +24,18 @@ jobs:
       - name: Build Binaries
         run: |
           go mod download
-          GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -X 'go-template/common.Version=$(git describe --tags)'" -o go-template-linux-amd64
-          GOOS=linux GOARCH=arm GOARM=7 go build -ldflags "-s -w -X 'go-template/common.Version=$(git describe --tags)'" -o go-template-linux-arm7
-          GOOS=linux GOARCH=arm64 go build -ldflags "-s -w -X 'go-template/common.Version=$(git describe --tags)'" -o go-template-linux-arm64
-          GOOS=windows GOARCH=amd64 go build -ldflags "-s -w -X 'go-template/common.Version=$(git describe --tags)'" -o go-template-windows-amd64.exe
-          GOOS=darwin GOARCH=amd64 go build -ldflags "-s -w -X 'go-template/common.Version=$(git describe --tags)'" -o go-template-darwin-amd64
-          GOOS=darwin GOARCH=arm64 go build -ldflags "-s -w -X 'go-template/common.Version=$(git describe --tags)'" -o go-template-darwin-arm64
+          GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -X 'go-public/common.Version=$(git describe --tags)'" -o go-public-linux-amd64
+          GOOS=linux GOARCH=arm GOARM=7 go build -ldflags "-s -w -X 'go-public/common.Version=$(git describe --tags)'" -o go-public-linux-arm7
+          GOOS=linux GOARCH=arm64 go build -ldflags "-s -w -X 'go-public/common.Version=$(git describe --tags)'" -o go-public-linux-arm64
+          GOOS=windows GOARCH=amd64 go build -ldflags "-s -w -X 'go-public/common.Version=$(git describe --tags)'" -o go-public-windows-amd64.exe
+          GOOS=darwin GOARCH=amd64 go build -ldflags "-s -w -X 'go-public/common.Version=$(git describe --tags)'" -o go-public-darwin-amd64
+          GOOS=darwin GOARCH=arm64 go build -ldflags "-s -w -X 'go-public/common.Version=$(git describe --tags)'" -o go-public-darwin-arm64
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            go-template*
+            go-public*
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

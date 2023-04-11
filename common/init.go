@@ -8,7 +8,7 @@ import (
 var (
 	PrintVersion = flag.Bool("version", false, "Print version and exit")
 	PrintHelp    = flag.Bool("help", false, "Print help and exit")
-	ConfigFile   = flag.String("config", "go-template.yaml", "Config file path")
+	ConfigFile   = flag.String("config", "go-public.yaml", "Config file path")
 )
 
 func init() {

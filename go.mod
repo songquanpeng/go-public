@@ -1,4 +1,4 @@
-module go-template
+module go-public
 
 go 1.19
 
