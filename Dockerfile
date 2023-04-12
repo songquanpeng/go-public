@@ -11,7 +11,7 @@ RUN go build -ldflags "-s -w -X 'go-public/common.Version=$(cat VERSION)'" -o go
 
 FROM scratch
 
-COPY --from=builder /build/go-public /app
+COPY --from=builder /build/go-public /
 EXPOSE 7891
 EXPOSE 8080
 WORKDIR /app
