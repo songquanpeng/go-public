@@ -47,6 +47,22 @@ cat go-public-server.yaml
 ./go-public
 ```
 
+Or you can use docker to run the server:
+```bash
+docker run -d --restart always --name go-public -p 6871:6871 -p 8080:8080 -v /home/ubuntu/data/go-public:/app justsong/go-public
+```
+
+IP whitelist configuration example:
+```yaml
+# go-public-server.yaml
+whitelist:
+  - 123.213.241.5
+  - 123.213.242.9
+  - 125.216.243.1
+```
+
+```bash
+
 ### Client Side
 
 ```bash

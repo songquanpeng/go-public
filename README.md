@@ -47,10 +47,19 @@ cat go-public-server.yaml
 ./go-public
 ```
 
-或者使用 Docker 进行部署
+或者使用 Docker 进行部署：
 
 ```bash
 docker run -d --restart always --name go-public -p 6871:6871 -p 8080:8080 -v /home/ubuntu/data/go-public:/app justsong/go-public
+```
+
+IP 白名单配置示例：
+```yaml
+# go-public-server.yaml
+whitelist:
+  - 123.213.241.5
+  - 123.213.242.9
+  - 125.216.243.1
 ```
 
 ### 客户端
