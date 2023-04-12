@@ -71,11 +71,13 @@ func LoadConfigFile(isServer bool) {
 	if err != nil {
 		println("Config file `" + configPath + "` not found.")
 		if isServer {
-			println("Use `go-public init server` to initialize a config file.")
+			println("Generating a new config file...")
+			InitConfigFile(true)
+			configBytes, _ = os.ReadFile(configPath)
 		} else {
 			println("Use `go-public init client` to initialize a config file.")
+			os.Exit(1)
 		}
-		os.Exit(1)
 	}
 	if isServer {
 		err = yaml.Unmarshal(configBytes, &ServerConfig)

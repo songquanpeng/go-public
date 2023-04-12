@@ -9,16 +9,10 @@ COPY . .
 RUN go mod download
 RUN go build -ldflags "-s -w -X 'go-public/common.Version=$(cat VERSION)'" -o go-public
 
-FROM alpine
-
-RUN apk update \
-    && apk upgrade \
-    && apk add --no-cache ca-certificates tzdata \
-    && update-ca-certificates 2>/dev/null || true
+FROM scratch
 
 COPY --from=builder /build/go-public /
-EXPOSE 6871
+EXPOSE 7891
 EXPOSE 8080
 WORKDIR /app
 ENTRYPOINT ["/go-public"]
-
