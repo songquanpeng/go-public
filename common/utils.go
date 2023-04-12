@@ -2,6 +2,7 @@ package common
 
 import (
 	"github.com/google/uuid"
+	"os/user"
 )
 
 func GenerateToken() string {
@@ -23,4 +24,9 @@ func Bytes2Token(bytes []byte) string {
 		return string(bytes)
 	}
 	return id.String()
+}
+
+func GetHomeDir() string {
+	usr, _ := user.Current()
+	return usr.HomeDir
 }

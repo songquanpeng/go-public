@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v3"
 	"os"
 	"path"
@@ -28,14 +29,43 @@ func getConfigPath(isServer bool) string {
 	} else {
 		configPath = path.Join(*ConfigPath, "go-public-client.yaml")
 	}
+	// If config file is not found in the specified path, try to find it in the default path
+	if _, err := os.Stat(*ConfigPath); os.IsNotExist(err) {
+		basePath := path.Join(GetHomeDir(), ".config")
+		var configPath2 string
+		if isServer {
+			configPath2 = path.Join(basePath, "go-public-server.yaml")
+		} else {
+			configPath2 = path.Join(basePath, "go-public-client.yaml")
+		}
+		if _, err := os.Stat(configPath2); err == nil {
+			configPath = configPath2
+		}
+	}
 	return configPath
 }
 
 func InitConfigFile(isServer bool) {
 	configPath := getConfigPath(isServer)
 	if _, err := os.Stat(configPath); err == nil {
-		println("Config file already exists.")
+		fmt.Println("Config file already exists at: " + configPath)
 		os.Exit(1)
+	}
+	if !isServer {
+		fmt.Print("Where do you want to save the config file? (default: ~/.config) ")
+		var input string
+		_, _ = fmt.Scanln(&input)
+		if input == "" {
+			input = path.Join(GetHomeDir(), ".config")
+		}
+		if _, err := os.Stat(input); os.IsNotExist(err) {
+			err := os.Mkdir(input, 0700)
+			if err != nil {
+				fmt.Println("Failed to create directory: " + input)
+				os.Exit(1)
+			}
+		}
+		configPath = path.Join(input, "go-public-client.yaml")
 	}
 	defaultServerConfig := serverConfig{
 		Port:  6871,
