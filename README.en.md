@@ -1,12 +1,12 @@
 <p align="right">
-   <strong>中文</strong> | <a href="./README.en.md">English</a>
+   <a href="README.md">中文</a> | <strong>English</strong>
 </p>
 
 <div align="center">
 
 # Go Public
 
-_✨ 基于 Go 的本地端口转发工具，开箱即用 ✨_
+_✨ Easily forward your local port to the public network. ✨_
 
 </div>
 
@@ -28,47 +28,42 @@ _✨ 基于 Go 的本地端口转发工具，开箱即用 ✨_
   </a>
 </p>
 
-## 功能
-+ [x] 开箱即用
-+ [x] 支持 TCP
-+ [ ] 支持 UDP
-+ [ ] 支持 IP 白名单
+## Features
++ [x] Very easy to use
++ [x] Support TCP
++ [ ] Support UDP
++ [ ] Support IP whitelist
 
-## 用法
+## Usages
 
-### 服务端
+### Server Side
 
 ```bash
-# 初始化配置文件
+# Init config file
 ./go-public init server
-# 检查并保存生成的令牌
+# Save the generated token, will be used in the client side for authentication
 cat go-public-server.yaml
-# 启动服务器
+# Start the server
 ./go-public
 ```
 
-或者使用 Docker 进行部署
+### Client Side
 
 ```bash
-docker run -d --restart always --name go-public -p 6871:6871 -p 8080:8080 -v /home/ubuntu/data/go-public:/app justsong/go-public
-```
-
-### 客户端
-
-```bash
-# 初始化配置文件
+# Initialize config file
 ./go-public init client
-# 使用保存的令牌修改配置文件
+# Modify the config file with your saved token
 vim go-public-client.yaml
-# 启动客户端
-# 注意，远程端口不是配置文件中设置的服务器所监听的端口，
-# 而是你想在哪一个端口上映射本地端口
-./go-public <本地端口> <远程端口>
-# 例如：
-./go-public 3000 8080  # 将本地 3000 端口映射到远程服务器上的 8080 端口
+# Start the client
+# Please be aware that the remote port is not the port that the server listens on 
+# as specified in the configuration file, but rather the port on which you want 
+# to map the local port.
+./go-public <local_port> <remote_port>
+# For example:
+./go-public 3000 8080  # Forward local port 3000 to remote port 8080
 ```
 
-## 流程图
+## Flowchart
 
 ```mermaid
 sequenceDiagram
