@@ -14,7 +14,7 @@ var (
 func PrintUsage() {
 	println("Go Public " + Version + " - A simple port forwarding tool.")
 	println("Copyright (C) 2023 JustSong. All rights reserved.")
-	println("GitHub repository: https://github.com/songquanpeng/go-public")
+	println("GitHub: https://github.com/songquanpeng/go-public")
 	println("Usage: go-public [--config <config file path>] [--version] [--help]")
 	println("       go-public init <server|client>")
 	println("       go-public <local_port> <remote_port>")
