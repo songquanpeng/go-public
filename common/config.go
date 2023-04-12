@@ -9,7 +9,7 @@ import (
 type serverConfig struct {
 	Port      int      `yaml:"port"`
 	Token     string   `yaml:"token"`
-	WhiteList []string `yaml:"white_list"`
+	Whitelist []string `yaml:"whitelist"`
 }
 
 type clientConfig struct {

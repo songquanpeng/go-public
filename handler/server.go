@@ -26,6 +26,11 @@ func ServeForever() {
 			println(err.Error())
 			continue
 		}
+		ip := conn.RemoteAddr().(*net.TCPAddr).IP.String()
+		if !isInWhitelist(ip) {
+			conn.Close()
+			continue
+		}
 		go handleClientConnection(conn)
 	}
 }

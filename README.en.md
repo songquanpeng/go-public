@@ -32,7 +32,7 @@ _✨ Easily forward your local port to the public network. ✨_
 + [x] Very easy to use
 + [x] Support TCP
 + [ ] Support UDP
-+ [ ] Support IP whitelist
++ [x] Support IP whitelist
 
 ## Usages
 
