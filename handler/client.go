@@ -26,6 +26,7 @@ func PublicPort(localPort, remotePort int) {
 		n, err := conn.Read(buf)
 		if err != nil {
 			fmt.Println("Failed to read connection packet:", err.Error())
+			fmt.Println("Check if your token is valid or your ip is in the whitelist.")
 			fmt.Println("Abort.")
 			return
 		}
